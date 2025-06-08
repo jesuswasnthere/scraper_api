@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\david\\source\\repos\\scraper_api\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7BF5602E-3F31-44FF-AE86-1C646CD1DF08}|scraper_api\\scraper_api.pyproj|C:\\Users\\david\\source\\repos\\scraper_api\\scraper_api\\requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{7BF5602E-3F31-44FF-AE86-1C646CD1DF08}|scraper_api\\scraper_api.pyproj|solutionrelative:scraper_api\\requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "requirements.txt",
+              "DocumentMoniker": "C:\\Users\\david\\source\\repos\\scraper_api\\scraper_api\\requirements.txt",
+              "RelativeDocumentMoniker": "scraper_api\\requirements.txt",
+              "ToolTip": "C:\\Users\\david\\source\\repos\\scraper_api\\scraper_api\\requirements.txt",
+              "RelativeToolTip": "scraper_api\\requirements.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-06-01T20:50:55.76Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
