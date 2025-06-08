@@ -1,4 +1,4 @@
-import shutil
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -6,23 +6,22 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from fastapi import FastAPI
 import uvicorn
-import os
 
 app = FastAPI()
 
 @app.get("/api/p2p-rates")
 async def get_binance_p2p_rate():
     try:
-        # Verificar la instalación de Chrome
-        chrome_path = shutil.which("google-chrome")
-        chromedriver_path = shutil.which("chromedriver")
+        # Definir rutas correctas en Render
+        chrome_path = os.path.expanduser("~/chrome/google-chrome")
+        chromedriver_path = os.path.expanduser("~/chrome/chromedriver")
 
-        if not chrome_path or not chromedriver_path:
+        if not os.path.exists(chrome_path) or not os.path.exists(chromedriver_path):
             raise RuntimeError("Chrome o ChromeDriver no están instalados correctamente.")
 
         # Configurar Selenium con Chrome
         chrome_options = Options()
-        chrome_options.binary_location = chrome_path  # Indicar la ubicación de Chrome
+        chrome_options.binary_location = chrome_path
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
