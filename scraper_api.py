@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from fastapi import FastAPI
 import uvicorn
+from yadio_scraper import get_yadio_rate  # Importamos el módulo de Yadio
 
 app = FastAPI()
 
@@ -38,6 +39,10 @@ async def get_binance_p2p_rate():
     except Exception as e:
         import traceback
         return {"error": str(e), "trace": traceback.format_exc()}
+
+@app.get("/api/yadio-rate")
+async def yadio_rate():
+    return get_yadio_rate()
 
 # Ejecutar el servidor con Uvicorn en Render
 if __name__ == "__main__":
