@@ -1,4 +1,4 @@
-﻿from selenium import webdriver
+from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -10,7 +10,7 @@ import uvicorn
 app = FastAPI()
 
 @app.get("/api/p2p-rates")
-async def get_p2p_rates():
+async def get_binance_p2p_rate():
     try:
         # Configurar Selenium con Chrome para entorno sin GUI
         chrome_options = Options()
@@ -29,28 +29,26 @@ async def get_p2p_rates():
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         driver.quit()  # Cerrar el navegador
 
-        # Extraer las secciones P2P
-        p2p_sections = soup.find_all("div", class_="lg:col-span-1 md:col-span3 sm:col-span-3 col-span-6 undefined")
+        # Extraer la tasa de Binance P2P
+        binance_section = soup.find("div", class_="lg:col-span-1 md:col-span3 sm:col-span-3 col-span-4 relative")
 
-        rates = []
-        for section in p2p_sections:
-            platform_tag = section.find("h3", class_="font-bold")
-            platform = platform_tag.text.strip() if platform_tag else "Desconocido"
-
-            rate_tag = section.find("p", class_="font-bold text-xl")
+        if binance_section:
+            rate_tag = binance_section.find("p", class_="font-bold text-xl")
             rate = rate_tag.text.replace("Bs = ", "").replace(",", ".") if rate_tag else "N/A"
 
-            time_date_tags = section.find("small", class_="block").find_all("p") if section.find("small", class_="block") else []
+            time_date_tags = binance_section.find("small", class_="block").find_all("p") if binance_section.find("small", class_="block") else []
             time = time_date_tags[0].text if len(time_date_tags) > 0 else "N/A"
             date = time_date_tags[1].text if len(time_date_tags) > 1 else "N/A"
 
-            if "Binance P2P" in platform or "El Dorado P2P" in platform:
-                rates.append({"platform": platform, "rate": rate, "time": time, "date": date})
+            return {
+                "platform": "Binance P2P",
+                "rate": rate,
+                "time": time,
+                "date": date,
+                "last_updated": datetime.now().isoformat()
+            }
 
-        # Agregar última actualización
-        rates.append({"last_updated": datetime.now().isoformat()})
-
-        return rates
+        return {"error": "Binance P2P rate not found"}
 
     except Exception as e:
         import traceback
