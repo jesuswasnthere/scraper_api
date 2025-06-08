@@ -1,7 +1,4 @@
-import os
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+import httpx
 from bs4 import BeautifulSoup
 from datetime import datetime
 from fastapi import FastAPI
@@ -12,32 +9,18 @@ app = FastAPI()
 @app.get("/api/p2p-rates")
 async def get_binance_p2p_rate():
     try:
-        # Definir rutas correctas en Render
-        chrome_path = os.path.expanduser("~/chrome/google-chrome")
-        chromedriver_path = os.path.expanduser("~/chrome/chromedriver")
+        # Hacer la petición HTTP directamente sin Selenium
+        url = "https://exchangemonitor.net/venezuela/dolar-binance"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        
+        # Descargar la página
+        response = httpx.get(url, headers=headers)
+        response.raise_for_status()  # Verificar errores
 
-        if not os.path.exists(chrome_path) or not os.path.exists(chromedriver_path):
-            raise RuntimeError("Chrome o ChromeDriver no están instalados correctamente.")
+        # Parsear el HTML con BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Configurar Selenium con Chrome
-        chrome_options = Options()
-        chrome_options.binary_location = chrome_path
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-
-        service = Service(chromedriver_path)
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-
-        # Cargar la página
-        driver.get("https://exchangemonitor.net/venezuela/dolar-binance")
-
-        # Obtener el HTML actualizado
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        driver.quit()
-
-        # Buscar la tasa dentro del div correcto
+        # Extraer la tasa de Binance P2P
         rate_section = soup.find("div", class_="history-rate fs-2")
 
         if rate_section:
@@ -58,4 +41,4 @@ async def get_binance_p2p_rate():
 
 # Ejecutar el servidor con Uvicorn en Render
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+    uvicorn.run(app, host="0.0.0.0", port=8000)
