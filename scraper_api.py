@@ -1,3 +1,4 @@
+import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -6,12 +7,16 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from fastapi import FastAPI
 import uvicorn
+import os
 
 app = FastAPI()
 
 @app.get("/api/p2p-rates")
 async def get_binance_p2p_rate():
     try:
+        # Instalar Chrome automáticamente
+        chromedriver_autoinstaller.install()
+
         # Configurar Selenium con Chrome
         chrome_options = Options()
         chrome_options.add_argument("--headless")
@@ -22,7 +27,7 @@ async def get_binance_p2p_rate():
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
 
-        # Cargar la página de Binance P2P en Exchange Monitor
+        # Cargar la página
         driver.get("https://exchangemonitor.net/venezuela/dolar-binance")
 
         # Obtener el HTML actualizado
@@ -50,4 +55,4 @@ async def get_binance_p2p_rate():
 
 # Ejecutar el servidor con Uvicorn en Render
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
