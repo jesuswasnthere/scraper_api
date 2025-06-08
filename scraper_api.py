@@ -12,39 +12,33 @@ app = FastAPI()
 @app.get("/api/p2p-rates")
 async def get_binance_p2p_rate():
     try:
-        # Configurar Selenium con Chrome para entorno sin GUI
+        # Configurar Selenium con Chrome
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Ejecutar en segundo plano
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--no-sandbox")  # Requerido en entornos sin servidor
-        chrome_options.add_argument("--disable-dev-shm-usage")  # Evita problemas de memoria
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
 
-        # Cargar la página
-        driver.get("https://monitordolarvenezuela.com/")
+        # Cargar la página de Binance P2P en Exchange Monitor
+        driver.get("https://exchangemonitor.net/venezuela/dolar-binance")
 
         # Obtener el HTML actualizado
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        driver.quit()  # Cerrar el navegador
+        driver.quit()
 
-        # Extraer la tasa de Binance P2P
-        binance_section = soup.find("div", class_="lg:col-span-1 md:col-span3 sm:col-span-3 col-span-4 relative")
+        # Buscar la tasa dentro del div correcto
+        rate_section = soup.find("div", class_="history-rate fs-2")
 
-        if binance_section:
-            rate_tag = binance_section.find("p", class_="font-bold text-xl")
-            rate = rate_tag.text.replace("Bs = ", "").replace(",", ".") if rate_tag else "N/A"
-
-            time_date_tags = binance_section.find("small", class_="block").find_all("p") if binance_section.find("small", class_="block") else []
-            time = time_date_tags[0].text if len(time_date_tags) > 0 else "N/A"
-            date = time_date_tags[1].text if len(time_date_tags) > 1 else "N/A"
+        if rate_section:
+            rate_text = rate_section.text.strip().replace("Bs.", "").replace(",", ".")
+            rate = rate_text if rate_text else "N/A"
 
             return {
                 "platform": "Binance P2P",
                 "rate": rate,
-                "time": time,
-                "date": date,
                 "last_updated": datetime.now().isoformat()
             }
 
@@ -54,6 +48,6 @@ async def get_binance_p2p_rate():
         import traceback
         return {"error": str(e), "trace": traceback.format_exc()}
 
-# Ejecutar el servidor con Uvicorn en Vercel
+# Ejecutar el servidor con Uvicorn en Render
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
