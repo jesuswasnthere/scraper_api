@@ -3,3 +3,4 @@ httpx>=0.18.0
 beautifulsoup4>=4.9.0
 uvicorn>=0.15.0
 selenium>=4.33.0
+webdriver-manager>=4.0.2
